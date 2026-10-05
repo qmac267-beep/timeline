@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dòng Thời Gian Lịch Sử - Hải Phòng & Việt Nam</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1e3a8a;
+            --secondary-color: #3b82f6;
+            --accent-color: #f59e0b;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #4b5563;
+            --border-color: #e5e7eb;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        header h1 {
+            font-size: 2.25rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* Timeline Container */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        /* Center line */
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 30px;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--secondary-color), var(--accent-color));
+            border-radius: 2px;
+        }
+
+        @media (min-width: 768px) {
+            .timeline::before {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+
+        /* Timeline Item */
+        .timeline-item {
+            position: relative;
+            margin-bottom: 40px;
+            width: 100%;
+        }
+
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Content Box */
+        .timeline-content {
+            position: relative;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 24px;
+            margin-left: 70px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .timeline-content:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (min-width: 768px) {
+            .timeline-item {
+                width: 50%;
+                padding-right: 40px;
+            }
+
+            .timeline-item:nth-child(even) {
+                margin-left: 50%;
+                padding-right: 0;
+                padding-left: 40px;
+            }
+
+            .timeline-content {
+                margin-left: 0;
+            }
+        }
+
+        /* Dot indicator */
+        .timeline-dot {
+            position: absolute;
+            left: 30px;
+            top: 24px;
+            width: 20px;
+            height: 20px;
+            background-color: var(--accent-color);
+            border: 4px solid #fff;
+            border-radius: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 0 3px var(--secondary-color);
+            z-index: 10;
+        }
+
+        @media (min-width: 768px) {
+            .timeline-item:nth-child(odd) .timeline-dot {
+                left: 100%;
+                transform: translateX(-50%);
+            }
+
+            .timeline-item:nth-child(even) .timeline-dot {
+                left: 0;
+                transform: translateX(-50%);
+            }
+        }
+
+        /* Typography inside card */
+        .timeline-badge {
+            display: inline-block;
+            background-color: #eff6ff;
+            color: var(--secondary-color);
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .timeline-content h3 {
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            margin-bottom: 14px;
+            font-weight: 600;
+        }
+
+        .section-block {
+            margin-bottom: 12px;
+        }
+
+        .section-block strong {
+            color: var(--text-main);
+            display: inline-block;
+            margin-bottom: 2px;
+        }
+
+        .section-block p, .section-block ul {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .section-block ul {
+            padding-left: 20px;
+            margin-top: 4px;
+        }
+
+        .section-block li {
+            margin-bottom: 4px;
+        }
+
+        footer.site-footer {
+            text-align: center;
+            margin-top: 60px;
+            color: #9ca3af;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Dòng Thời Gian Lịch Sử</h1>
+            <p>Hành trình lịch sử Hải Phòng song hành cùng tiến trình Cách mạng Việt Nam</p>
+        </header>
+
+        <div class="timeline">
+
+            <!-- GIAI ĐOẠN 1 -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <span class="timeline-badge">Giai đoạn 1</span>
+                    <h3>Cuối thế kỷ XIX đến năm 1930</h3>
+                    
+                    <div class="section-block">
+                        <strong>Lãnh đạo / Tổ chức:</strong>
+                        <p>Các sĩ phu yêu nước (Phan Bội Châu, Phan Châu Trinh), Nguyễn Ái Quốc và sự ra đời của Đảng Cộng sản Việt Nam (2/1930).</p>
+                    </div>
+
+                    <div class="section-block">
+                        <strong>Đường lối & Nhiệm vụ:</strong>
+                        <p>Thực dân Pháp khai thác thuộc địa, quy hoạch Hải Phòng thành thành phố cảng lớn. Nhân dân đấu tranh chống áp bức phong kiến - thực dân, chuyển từ tự phát sang tự giác; tìm đường cứu nước.</p>
+                    </div>
+
+                    <div class="section-block">
+                        <strong>Sự kiện nổi bật:</strong>
+                        <ul>
+                            <li>Nguyễn Ái Quốc ra đi tìm đường cứu nước (1911) và truyền bá chủ nghĩa Mác - Lênin.</li>
+                            <li>Hình thành cơ sở hạ tầng đô thị cảng Hải Phòng, đường sắt, cầu cất.</li>
+                            <li>Phong trào công nhân bãi công và thành lập Đảng bộ Hải Phòng (tháng 4/1930).</li>
+                        </ul>
+                    </div>
+
+                    <div class="section-block">
+                        <strong>Đóng góp lịch sử:</strong>
+                        <p>Đặt nền móng trung tâm công nghiệp, thương mại, đầu mối giao lưu quốc tế; chấm dứt khủng hoảng về đường lối cứu nước.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GIAI ĐOẠN 2 -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <span class="timeline-badge">Giai đoạn 2</span>
+                    <h3>Từ năm 1930 đến năm 1945</h3>
+                    
+                    <div class="section-block">
+                        <strong>Lãnh đạo / Tổ chức:</strong>
+                        <p>Đảng Cộng sản Đông Dương (các Tổng Bí thư: Trần Phú, Lê Hồng Phong, Nguyễn Văn Cừ, Trường Chinh) và Lãnh tụ Hồ Chí Minh.</p>
+                    </div>
+
+                    <div class="section-block">
+                        <strong>Đường lối & Nhiệm vụ:</strong>
+                        <p>Đi theo con đường cách mạng vô sản, kết hợp linh hoạt đấu tranh công khai và bí mật, xây dựng cơ sở quần chúng, lập Mặt trận Việt Minh chuẩn bị khởi nghĩa.</p>
+                    </div>
+
+                    <div class="section-block">
+                        <strong>Sự kiện nổi bật:</strong>
+                        <ul>
+                            <li>Cao trào cách mạng 1930 - 1931, 1936 - 1939 và kháng Nhật cứu nước.</li>
+                            <li>Đỉnh cao là cuộc Tổng khởi nghĩa Tháng Tám năm 1945 giành chính quyền thành công tại Hải Phòng.</li>
+                            <li>Ngày 2/9/1945: Chủ tịch Hồ Chí Minh đọc Tuyên ngôn Độc lập khai sinh nước VNDCCH.</li>
+                        </ul>
+                    </div>
+
+                    <div class="section-block">
+                        <strong>Đóng góp lịch sử:</strong>
+                        <p>Đập tan xiềng xích thực dân phong kiến, góp phần quan trọng vào thắng lợi chung của Cách mạng Tháng Tám, lập nên nhà nước công nông đầu tiên.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GIAI ĐOẠN 3 -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <span class="timeline-badge">Giai đoạn 3</span>
+                    <h3>Từ năm 1945 đến năm 1955 (1954)</h3>
+                    
+                    <div class="section-block">
+                        <strong>Lãnh đạo / Tổ chức:</strong>
+                        <p>Chủ tịch Hồ Chí Minh, Trung ương Đảng, Chính phủ và Đại tướng Võ Nguyên Giáp.</p>
+                    </div>
+
+                    <div class="section-block">
+                        <strong>Đường lối & Nhiệm vụ:</strong>
+                        <p>Vừa kháng chiến vừa kiến quốc, thực hiện đường lối chiến tranh nhân dân "toàn dân, toàn diện, trường kỳ, tự lực cánh sinh"; giam chân địch trong thành phố tạm chiếm.</p>
+                    </div>
+
+                    <div class="section-block">
+                        <strong>Sự kiện nổi bật:</strong>
+                        <ul>
+                            <li>Các chiến dịch lớn: Việt Bắc (1947), Biên Giới (1950) và đỉnh cao Điện Biên Phủ (1954).</li>
+                            <li>Những năm tháng chiến đấu trong lòng địch tại Hải Phòng (1946 - 1954).</li>
+                            <li>Ngày 13/5/1955: Tên lính thực dân cuối cùng rút đi, Hải Phòng hoàn toàn giải phóng.</li>
+                        </ul>
+                    </div>
+
+                    <div class="section-block">
+                        <strong>Đóng góp lịch sử:</strong>
+                        <p>Bảo vệ vững chắc thành quả cách mạng, chấm dứt hoàn toàn ách thống trị của thực dân Pháp tại thành phố Cảng, đưa miền Bắc bước vào kỷ nguyên xây dựng chủ nghĩa xã hội.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GIAI ĐOẠN 4 -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <span class="timeline-badge">Giai đoạn 4</span>
+                    <h3>Từ năm 1955 đến năm 1975</h3>
+                    
+                    <div class="section-block">
+                        <strong>Lãnh đạo / Tổ chức:</strong>
+                        <p>Chủ tịch Hồ Chí Minh, Bí thư thứ nhất Lê Duẩn, Bộ Chính trị và Mặt trận Dân tộc Giải phóng miền Nam.</p>
+                    </div>
+
+                    <div class="section-block">
+                        <strong>Đường lối & Nhiệm vụ:</strong>
+                        <p>Vừa khôi phục, phát triển kinh tế ở hậu phương miền Bắc (Hải Phòng), vừa trực tiếp chiến đấu chống chiến tranh phá hoại của Mỹ, vừa chi viện lớn cho tiền tuyến miền Nam.</p>
+                    </div>
+
+                    <div class="section-block">
+                        <strong>Sự kiện nổi bật:</strong>
+                        <ul>
+                            <li>Phong trào thi đua sản xuất, chiến đấu bảo vệ bầu trời, vùng biển, rà phá thủy lôi tại cảng Hải Phòng.</li>
+                            <li>Đánh bại các chiến lược chiến tranh của Mỹ, chiến thắng "Điện Biên Phủ trên không" (1972).</li>
+                            <li>Chiến dịch Hồ Chí Minh lịch sử (30/4/1975): Giải phóng hoàn toàn miền Nam, thống nhất đất nước.</li>
+                        </ul>
+                    </div>
+
+                    <div class="section-block">
+                        <strong>Đóng góp lịch sử:</strong>
+                        <p>Khẳng định vai trò "pháo đài thép", cửa ngõ giao thương, tiếp nhận viện trợ chiến lược và là hậu phương vững chắc góp phần quyết định thắng lợi mùa Xuân 1975.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <footer class="site-footer">
+            <p>Được tổng hợp và thiết kế cho dự án học tập / portfolio cá nhân.</p>
+        </footer>
+    </div>
+
+</body>
+</html>
