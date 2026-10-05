@@ -349,31 +349,18 @@
         </div>
 
         <footer class="site-footer">
-            <p>Được tổng hợp và thiết kế cho dự án học tập / portfolio cá nhân.</p>
+            <p>Được phát triển bởi Quân Mạc.</p>
         </footer>
     </div>
 
-    <!-- ========================================== -->
+    <!-- ================= CHATBOT AI WIDGET (IFRAME COZE) ================= -->
+    <div style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; width: 380px; height: 550px; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); background: white;">
+        <iframe 
+            src="https://www.coze.com/store/bot/7693166210363490357" 
+            style="width: 100%; height: 100%; border: none;" 
+            allow="microphone">
+        </iframe>
+    </div>
 
-<script src="https://sf-cdn.coze.com/obj/unpkg-va/flow-platform/chat-app-sdk/1.2.0-beta.6/libs/oversea/index.js"></script>
-<script>
-  new CozeWebSDK.WebChatClient({
-    config: {
-      bot_id: '7693166210363490357',
-    },
-    componentProps: {
-      title: 'Coze',
-    },
-    auth: {
-      type: 'token',
-      token: 'pat_xGOfcshEioltstJuE6NmIPJTKZ6qkbpPAsgvpKsqatakVO75bFMdVs4ISFaJnGon',
-      onRefreshToken: function () {
-        return 'pat_xGOfcshEioltstJuE6NmIPJTKZ6qkbpPAsgvpKsqatakVO75bFMdVs4ISFaJnGon'
-      }
-    }
-  });
-</script>
-    <!-- ========================================== -->
-    
 </body>
 </html>
