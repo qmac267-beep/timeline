@@ -202,6 +202,106 @@
             color: #9ca3af;
             font-size: 0.9rem;
         }
+
+        /* ================= AI CHATBOT WIDGET STYLES ================= */
+        .ai-chat-bubble {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #3b82f6, #1e3a8a);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        .ai-chat-bubble:hover { transform: scale(1.08); }
+        .ai-chat-bubble svg { width: 28px; height: 28px; fill: currentColor; }
+
+        .ai-chat-window {
+            position: fixed;
+            bottom: 95px;
+            right: 25px;
+            width: 360px;
+            height: 500px;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            overflow: hidden;
+            transform: scale(0);
+            transform-origin: bottom right;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .ai-chat-window.active { transform: scale(1); }
+
+        .ai-chat-header {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+        }
+        .ai-chat-close { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; }
+
+        .ai-chat-body {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #f8fafc;
+        }
+
+        .ai-message, .user-message {
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            max-width: 85%;
+            line-height: 1.4;
+        }
+        .ai-message { background: #e2e8f0; color: #1f2937; align-self: flex-start; }
+        .user-message { background: #3b82f6; color: white; align-self: flex-end; }
+        .ai-message.loading { color: #64748b; font-style: italic; }
+
+        .ai-chat-footer {
+            padding: 10px;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            gap: 8px;
+        }
+        .ai-chat-input {
+            flex: 1;
+            padding: 9px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            outline: none;
+            font-size: 0.9rem;
+        }
+        .ai-chat-input:focus { border-color: #3b82f6; }
+        .ai-chat-send {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 9px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .ai-chat-send:hover { background: #1e3a8a; }
     </style>
 </head>
 <body>
@@ -285,7 +385,7 @@
                 <div class="timeline-dot"></div>
                 <div class="timeline-content">
                     <span class="timeline-badge">Giai đoạn 3</span>
-                    <h3>Từ năm 1945 đến năm 1955 (1954)</h3>
+                    <h3>Từ năm 1945 đến năm 1955</h3>
                     
                     <div class="section-block">
                         <strong>Lãnh đạo / Tổ chức:</strong>
@@ -353,5 +453,100 @@
         </footer>
     </div>
 
+    <!-- ================= CHATBOT WIDGET GIAO DIỆN & LOGIC AI ================= -->
+    <div class="ai-chat-bubble" id="aiChatBubble" title="Hỏi trợ lý AI lịch sử">
+        <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
+    </div>
+
+    <div class="ai-chat-window" id="aiChatWindow">
+        <div class="ai-chat-header">
+            <span>Trợ lý Lịch sử AI</span>
+            <button class="ai-chat-close" id="aiChatClose">&times;</button>
+        </div>
+        <div class="ai-chat-body" id="aiChatBody">
+            <div class="ai-message">Xin chào! Tôi là trợ lý AI. Bạn muốn hỏi gì về các mốc lịch sử Hải Phòng và Việt Nam trên trang này không?</div>
+        </div>
+        <div class="ai-chat-footer">
+            <input type="text" class="ai-chat-input" id="aiChatInput" placeholder="Nhập câu hỏi của bạn...">
+            <button class="ai-chat-send" id="aiChatSend">Gửi</button>
+        </div>
+    </div>
+
+    <script>
+        const bubble = document.getElementById('aiChatBubble');
+        const chatWindow = document.getElementById('aiChatWindow');
+        const closeBtn = document.getElementById('aiChatClose');
+        const sendBtn = document.getElementById('aiChatSend');
+        const inputField = document.getElementById('aiChatInput');
+        const chatBody = document.getElementById('aiChatBody');
+
+        // BẠN HÃY THAY THẾ CHUỖI NÀY BẰNG GEMINI API KEY THẬT CỦA BẠN
+        const GEMINI_API_KEY = "AQ.Ab8RN6K2cEj19opPhmy75YL4CNAvtmTXWfj3Vo4hp-2rwGOfUA"; 
+
+        bubble.addEventListener('click', () => chatWindow.classList.toggle('active'));
+        closeBtn.addEventListener('click', () => chatWindow.classList.remove('active'));
+
+        async function callGeminiAPI(userQuestion) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+            
+            const contextPrompt = `Bạn là một trợ lý thông minh chuyên về lịch sử Hải Phòng và Việt Nam qua 4 giai đoạn chính được trình bày trên trang web này (Cuối thế kỷ XIX - 1930; 1930 - 1945; 1945 - 1955; 1955 - 1975). Hãy trả lời câu hỏi của người dùng ngắn gọn, chính xác, lịch sự bằng tiếng Việt dựa trên bối cảnh lịch sử đó: ${userQuestion}`;
+
+            const requestBody = {
+                contents: [{
+                    parts: [{ text: contextPrompt }]
+                }]
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(requestBody)
+                });
+                const data = await response.json();
+                return data.candidates[0].content.parts[0].text;
+            } catch (error) {
+                console.error(error);
+                return "Xin lỗi, hiện tại tôi đang gặp chút sự cố kết nối tới máy chủ AI. Bạn hãy thử lại sau nhé!";
+            }
+        }
+
+        async function handleSendMessage() {
+            const text = inputField.value.trim();
+            if (!text) return;
+
+            // Hiển thị tin nhắn người dùng
+            const userMsg = document.createElement('div');
+            userMsg.className = 'user-message';
+            userMsg.textContent = text;
+            chatBody.appendChild(userMsg);
+
+            inputField.value = '';
+            chatBody.scrollTop = chatBody.scrollHeight;
+
+            // Hiển thị trạng thái AI đang suy nghĩ
+            const loadingMsg = document.createElement('div');
+            loadingMsg.className = 'ai-message loading';
+            loadingMsg.textContent = "AI đang suy nghĩ...";
+            chatBody.appendChild(loadingMsg);
+            chatBody.scrollTop = chatBody.scrollHeight;
+
+            // Gọi API thực tế
+            const aiReplyText = await callGeminiAPI(text);
+
+            // Xóa loading và hiện câu trả lời
+            chatBody.removeChild(loadingMsg);
+            const aiMsg = document.createElement('div');
+            aiMsg.className = 'ai-message';
+            aiMsg.textContent = aiReplyText;
+            chatBody.appendChild(aiMsg);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        sendBtn.addEventListener('click', handleSendMessage);
+        inputField.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSendMessage();
+        });
+    </script>
 </body>
 </html>
