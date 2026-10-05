@@ -202,106 +202,6 @@
             color: #9ca3af;
             font-size: 0.9rem;
         }
-
-        /* ================= AI CHATBOT WIDGET STYLES ================= */
-        .ai-chat-bubble {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #3b82f6, #1e3a8a);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            transition: transform 0.3s ease;
-        }
-        .ai-chat-bubble:hover { transform: scale(1.08); }
-        .ai-chat-bubble svg { width: 28px; height: 28px; fill: currentColor; }
-
-        .ai-chat-window {
-            position: fixed;
-            bottom: 95px;
-            right: 25px;
-            width: 360px;
-            height: 500px;
-            background: #ffffff;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-            border: 1px solid #e5e7eb;
-            display: flex;
-            flex-direction: column;
-            z-index: 1000;
-            overflow: hidden;
-            transform: scale(0);
-            transform-origin: bottom right;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .ai-chat-window.active { transform: scale(1); }
-
-        .ai-chat-header {
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-            color: white;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 600;
-        }
-        .ai-chat-close { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; }
-
-        .ai-chat-body {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            background: #f8fafc;
-        }
-
-        .ai-message, .user-message {
-            padding: 10px 14px;
-            border-radius: 12px;
-            font-size: 0.9rem;
-            max-width: 85%;
-            line-height: 1.4;
-        }
-        .ai-message { background: #e2e8f0; color: #1f2937; align-self: flex-start; }
-        .user-message { background: #3b82f6; color: white; align-self: flex-end; }
-        .ai-message.loading { color: #64748b; font-style: italic; }
-
-        .ai-chat-footer {
-            padding: 10px;
-            background: white;
-            border-top: 1px solid #e5e7eb;
-            display: flex;
-            gap: 8px;
-        }
-        .ai-chat-input {
-            flex: 1;
-            padding: 9px 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            outline: none;
-            font-size: 0.9rem;
-        }
-        .ai-chat-input:focus { border-color: #3b82f6; }
-        .ai-chat-send {
-            background: #3b82f6;
-            color: white;
-            border: none;
-            padding: 9px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-        }
-        .ai-chat-send:hover { background: #1e3a8a; }
     </style>
 </head>
 <body>
@@ -453,91 +353,27 @@
         </footer>
     </div>
 
-    <!-- ================= CHATBOT WIDGET GIAO DIỆN & TRỢ LÝ AI ================= -->
-    <div class="ai-chat-bubble" id="aiChatBubble" title="Hỏi trợ lý AI lịch sử">
-        <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
-    </div>
+    <!-- ========================================== -->
 
-    <div class="ai-chat-window" id="aiChatWindow">
-        <div class="ai-chat-header">
-            <span>Trợ lý Lịch sử AI</span>
-            <button class="ai-chat-close" id="aiChatClose">&times;</button>
-        </div>
-        <div class="ai-chat-body" id="aiChatBody">
-            <div class="ai-message">Xin chào! Tôi là trợ lý AI chuyên gia lịch sử Hải Phòng và Việt Nam. Bạn muốn tìm hiểu hoặc thắc mắc về giai đoạn nào trên trang này cứ hỏi tôi nhé!</div>
-        </div>
-        <div class="ai-chat-footer">
-            <input type="text" class="ai-chat-input" id="aiChatInput" placeholder="Nhập câu hỏi của bạn...">
-            <button class="ai-chat-send" id="aiChatSend">Gửi</button>
-        </div>
-    </div>
-
-    <script>
-        const bubble = document.getElementById('aiChatBubble');
-        const chatWindow = document.getElementById('aiChatWindow');
-        const closeBtn = document.getElementById('aiChatClose');
-        const sendBtn = document.getElementById('aiChatSend');
-        const inputField = document.getElementById('aiChatInput');
-        const chatBody = document.getElementById('aiChatBody');
-
-        bubble.addEventListener('click', () => chatWindow.classList.toggle('active'));
-        closeBtn.addEventListener('click', () => chatWindow.classList.remove('active'));
-
-        // Trợ lý AI thông minh tích hợp sẵn cơ sở tri thức cục bộ (giải quyết triệt để lỗi 404 và CORS)
-        function getSmartAIEngine(question) {
-            const q = question.toLowerCase();
-
-            if (q.includes('hải phòng') && (q.includes('giải phóng') || q.includes('1955'))) {
-                return "Ngày 13/5/1955, tên lính thực dân Pháp cuối cùng đã rút khỏi cảng Hải Phòng, đánh dấu mốc Hải Phòng hoàn toàn giải phóng, đưa thành phố và miền Bắc bước vào kỷ nguyên xây dựng chủ nghĩa xã hội.";
-            } else if (q.includes('đảng') || q.includes('1930') || q.includes('3/2')) {
-                return "Ngày 3/2/1930, Đảng Cộng sản Việt Nam được thành lập dưới sự lãnh đạo của Nguyễn Ái Quốc. Riêng tại Hải Phòng, Đảng bộ Hải Phòng được thành lập vào tháng 4 năm 1930, đánh dấu bước ngoặt quyết định cho phong trào công nhân và nhân dân thành phố cảng.";
-            } else if (q.includes('1945') || q.includes('tháng tám') || q.includes('cách mạng')) {
-                return "Cuộc Tổng khởi nghĩa Cách mạng Tháng Tám năm 1945 tại Hải Phòng đã giành chính quyền thành công, góp phần cùng cả nước đập tan ách thống trị thực dân phong kiến, lập nên nước Việt Nam Dân chủ Cộng hòa (2/9/1945).";
-            } else if (q.includes('chống mỹ') || q.includes('1975') || q.includes('pháo đài thép')) {
-                return "Trong giai đoạn 1955 - 1975, Hải Phòng đóng vai trò là 'pháo đài thép' - cửa ngõ giao thương chiến lược, hậu phương vững chắc chi viện lớn cho tiền tuyến miền Nam cho đến ngày giải phóng hoàn toàn miền Nam (30/4/1975).";
-            } else if (q.includes('giai đoạn') || q.includes('mấy giai đoạn')) {
-                return "Trang web này chia lịch sử Hải Phòng và Việt Nam thành 4 giai đoạn chính:\n1. Cuối thế kỷ XIX - 1930\n2. 1930 - 1945\n3. 1945 - 1955\n4. 1955 - 1975.";
-            } else {
-                return "Cảm ơn câu hỏi của bạn về chủ đề lịch sử! Các mốc sự kiện, đường lối lãnh đạo và đóng góp lịch sử chi tiết cho từng giai đoạn đã được trình bày rất đầy đủ ngay trên các thẻ dòng thời gian của trang web. Bạn có thể cuộn lên xem thêm nhé!";
-            }
-        }
-
-        function handleSendMessage() {
-            const text = inputField.value.trim();
-            if (!text) return;
-
-            // Hiển thị tin nhắn người dùng
-            const userMsg = document.createElement('div');
-            userMsg.className = 'user-message';
-            userMsg.textContent = text;
-            chatBody.appendChild(userMsg);
-
-            inputField.value = '';
-            chatBody.scrollTop = chatBody.scrollHeight;
-
-            // Hiển thị trạng thái AI đang suy nghĩ
-            const loadingMsg = document.createElement('div');
-            loadingMsg.className = 'ai-message loading';
-            loadingMsg.textContent = "AI đang phân tích dữ liệu lịch sử...";
-            chatBody.appendChild(loadingMsg);
-            chatBody.scrollTop = chatBody.scrollHeight;
-
-            // Phản hồi thông minh sau 0.8 giây
-            setTimeout(() => {
-                chatBody.removeChild(loadingMsg);
-                const aiMsg = document.createElement('div');
-                aiMsg.className = 'ai-message';
-                aiMsg.style.whiteSpace = "pre-line"; // Hỗ trợ xuống dòng
-                aiMsg.textContent = getSmartAIEngine(text);
-                chatBody.appendChild(aiMsg);
-                chatBody.scrollTop = chatBody.scrollHeight;
-            }, 800);
-        }
-
-        sendBtn.addEventListener('click', handleSendMessage);
-        inputField.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleSendMessage();
-        });
-    </script>
+<script src="https://sf-cdn.coze.com/obj/unpkg-va/flow-platform/chat-app-sdk/1.2.0-beta.6/libs/oversea/index.js"></script>
+<script>
+  new CozeWebSDK.WebChatClient({
+    config: {
+      bot_id: '7693166210363490357',
+    },
+    componentProps: {
+      title: 'Coze',
+    },
+    auth: {
+      type: 'token',
+      token: 'pat_********',
+      onRefreshToken: function () {
+        return 'pat_********'
+      }
+    }
+  });
+</script>
+    <!-- ========================================== -->
+    
 </body>
 </html>
