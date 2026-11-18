@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Timeline Phát Triển Kinh Tế Hải Phòng (1976 - 2026)</title>
+  <style>
+    :root {
+      --bg-dark: #071324;
+      --bg-card: #0f233c;
+      --accent-blue: #00b4d8;
+      --accent-red: #e63946;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border-color: rgba(0, 180, 216, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #0d2544 0%, var(--bg-dark) 75%);
+      color: var(--text-main);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Lớp phủ làm tối toàn màn hình khi Focus */
+    .focus-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 15, 0.82);
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      z-index: 50;
+    }
+
+    body.is-focusing .focus-backdrop {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      padding: 60px 20px 25px;
+      max-width: 850px;
+      margin: 0 auto;
+      transition: opacity 0.35s ease;
+    }
+
+    body.is-focusing header,
+    body.is-focusing .filter-bar {
+      opacity: 0.25;
+      pointer-events: none;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 999px;
+      background: rgba(230, 57, 70, 0.15);
+      border: 1px solid var(--accent-red);
+      color: #ff758f;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+    }
+
+    header h1 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      background: linear-gradient(90deg, #ffffff, #90e0ef);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+    }
+
+    .hint-text {
+      margin-top: 10px;
+      font-size: 0.88rem;
+      color: var(--accent-blue);
+      opacity: 0.85;
+    }
+
+    /* Bộ lọc giai đoạn */
+    .filter-bar {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 10px 20px 40px;
+      max-width: 900px;
+      margin: 0 auto;
+      transition: opacity 0.35s ease;
+    }
+
+    .filter-btn {
+      background: var(--bg-card);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+      padding: 8px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.25s ease;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      background: var(--accent-blue);
+      color: #04101e;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 15px rgba(0, 180, 216, 0.4);
+    }
+
+    /* Trục Timeline */
+    .timeline-container {
+      position: relative;
+      max-width: 1050px;
+      margin: 0 auto 80px;
+      padding: 20px;
+    }
+
+    .timeline-container::after {
+      content: '';
+      position: absolute;
+      width: 4px;
+      background: linear-gradient(180deg, var(--accent-red), var(--accent-blue));
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      margin-left: -2px;
+      border-radius: 4px;
+      transition: opacity 0.35s ease;
+    }
+
+    body.is-focusing .timeline-container::after {
+      opacity: 0.15;
+    }
+
+    .timeline-item {
+      padding: 15px 40px;
+      position: relative;
+      width: 50%;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), filter 0.4s ease;
+    }
+
+    .timeline-item.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .timeline-item.hidden {
+      display: none;
+    }
+
+    .left { left: 0; }
+    .right { left: 50%; }
+
+    /* Điểm tròn trên trục */
+    .timeline-item::after {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      right: -9px;
+      background-color: var(--bg-dark);
+      border: 4px solid var(--accent-blue);
+      top: 28px;
+      border-radius: 50%;
+      z-index: 1;
+      box-shadow: 0 0 12px var(--accent-blue);
+      transition: all 0.35s ease;
+    }
+
+    .right::after {
+      left: -9px;
+    }
+
+    /* Thẻ nội dung */
+    .card {
+      padding: 24px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+                  border-color 0.35s ease,
+                  box-shadow 0.35s ease,
+                  background-color 0.35s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent-blue);
+    }
+
+    /* --- HIỆU ỨNG KHI BẬT CHẾ ĐỘ FOCUS --- */
+    /* Các thẻ KHÔNG được chọn sẽ tối sẫm và mờ nhẹ đi */
+    body.is-focusing .timeline-item:not(.focused) {
+      opacity: 0.22;
+      filter: brightness(0.45) grayscale(40%);
+      pointer-events: none;
+    }
+
+    /* Thẻ ĐƯỢC CHỌN sẽ nổi lên trên lớp phủ đen và phóng to */
+    .timeline-item.focused {
+      z-index: 100;
+      opacity: 1 !important;
+      filter: none !important;
+    }
+
+    .timeline-item.focused .card {
+      transform: scale(1.08);
+      background: #132c4c;
+      border-color: var(--accent-blue);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 25px rgba(0, 180, 216, 0.45);
+    }
+
+    .timeline-item.focused::after {
+      background-color: var(--accent-red);
+      border-color: #ffffff;
+      box-shadow: 0 0 18px var(--accent-red);
+      transform: scale(1.25);
+    }
+
+    /* Nút đóng nhỏ ở góc thẻ khi đang phóng to */
+    .close-focus-hint {
+      display: none;
+      position: absolute;
+      top: 16px;
+      right: 18px;
+      font-size: 0.8rem;
+      color: var(--accent-blue);
+      background: rgba(0, 180, 216, 0.12);
+      padding: 3px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(0, 180, 216, 0.3);
+    }
+
+    .timeline-item.focused .close-focus-hint {
+      display: inline-block;
+    }
+
+    .year-tag {
+      display: inline-block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent-blue);
+      background: rgba(0, 180, 216, 0.12);
+      padding: 4px 12px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+
+    .card h2 {
+      font-size: 1.25rem;
+      margin-bottom: 10px;
+      color: #ffffff;
+    }
+
+    .card p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .highlights {
+      list-style: none;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 10px;
+    }
+
+    .highlights li {
+      font-size: 0.9rem;
+      color: #cbd5e1;
+      margin-bottom: 6px;
+      padding-left: 16px;
+      position: relative;
+    }
+
+    .highlights li::before {
+      content: '▸';
+      position: absolute;
+      left: 0;
+      color: var(--accent-red);
+    }
+
+    /* Responsive Mobile */
+    @media screen and (max-width: 768px) {
+      .timeline-container::after {
+        left: 28px;
+      }
+      .timeline-item {
+        width: 100%;
+        padding-left: 65px;
+        padding-right: 15px;
+      }
+      .right {
+        left: 0%;
+      }
+      .timeline-item::after,
+      .right::after {
+        left: 19px;
+      }
+      .timeline-item.focused .card {
+        transform: scale(1.03);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Lớp nền tối mờ khi nhấn vào 1 giai đoạn -->
+  <div class="focus-backdrop" id="focusBackdrop"></div>
+
+  <header>
+    <div class="badge">50 Năm Phát Triển Kinh Tế</div>
+    <h1>Hải Phòng: Hành Trình Vươn Ra Biển Lớn (1976 – 2026)</h1>
+    <p>Dòng thời gian chuyển mình từ kinh tế bao cấp sau thống nhất đến trung tâm công nghiệp, cảng biển hiện đại hàng đầu cả nước.</p>
+    <div class="hint-text">💡 Mẹo: Nhấn vào từng giai đoạn bất kỳ để phóng to và tập trung đọc chi tiết</div>
+  </header>
+
+  <!-- Thanh lọc theo thời kỳ -->
+  <div class="filter-bar">
+    <button class="filter-btn active" data-filter="all">Tất cả giai đoạn</button>
+    <button class="filter-btn" data-filter="1976-1985">1976 – 1985</button>
+    <button class="filter-btn" data-filter="1986-1995">1986 – 1995</button>
+    <button class="filter-btn" data-filter="1996-2008">1996 – 2008</button>
+    <button class="filter-btn" data-filter="2009-2019">2009 – 2019</button>
+    <button class="filter-btn" data-filter="2020-2026">2020 – 2026</button>
+  </div>
+
+  <!-- Nội dung Timeline -->
+  <main class="timeline-container" id="timeline">
+
+    <div class="timeline-item left" data-period="1976-1985">
+      <div class="card">
+        <span class="close-focus-hint">Thu nhỏ ✕</span>
+        <span class="year-tag">1976 – 1985</span>
+        <h2>Khôi phục hạ tầng & Kinh tế bao cấp</h2>
+        <p>Giai đoạn khắc phục hậu quả chiến tranh, vận hành theo cơ chế kế hoạch hóa tập trung và tìm tòi hướng đi mới trong sản xuất.</p>
+        <ul class="highlights">
+          <li>Khôi phục hệ thống Cảng Hải Phòng và các cơ sở công nghiệp nặng (cơ khí, đóng tàu, xi măng).</li>
+          <li>Thí điểm "khoán sản phẩm" trong nông nghiệp tại Đồ Sơn (tiền đề cho Khoán 10).</li>
+          <li>Kinh tế chủ yếu dựa vào quốc doanh và hợp tác xã, tự cung tự cấp.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="timeline-item right" data-period="1986-1995">
+      <div class="card">
+        <span class="close-focus-hint">Thu nhỏ ✕</span>
+        <span class="year-tag">1986 – 1995</span>
+        <h2>Bước ngoặt Đổi Mới & Mở cửa thu hút FDI</h2>
+        <p>Chuyển dịch từ cơ chế bao cấp sang kinh tế hàng hóa nhiều thành phần, bắt đầu hội nhập quốc tế.</p>
+        <ul class="highlights">
+          <li>Xóa bỏ ngăn sông cấm chợ, khuyến khích kinh tế tư nhân và kinh tế hộ gia đình phát triển.</li>
+          <li>Thành lập Khu chế xuất Hải Phòng (1993) và KCN Nomura (1994) – đón làn sóng vốn FDI đầu tiên.</li>
+          <li>Hoạt động xuất nhập khẩu qua cảng bắt đầu tăng trưởng mạnh mẽ.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="timeline-item left" data-period="1996-2008">
+      <div class="card">
+        <span class="close-focus-hint">Thu nhỏ ✕</span>
+        <span class="year-tag">1996 – 2008</span>
+        <h2>Công nghiệp hóa & Mở rộng Khu kinh tế</h2>
+        <p>Hình thành các khu công nghiệp quy mô lớn, nâng cao năng lực vận tải biển và sản xuất hàng xuất khẩu.</p>
+        <ul class="highlights">
+          <li>Phát triển KCN Đình Vũ, VSIP Hải Phòng; thành lập Khu kinh tế Đình Vũ – Cát Hải (2008).</li>
+          <li>Các ngành mũi nhọn: đóng tàu, sản xuất thép, dệt may, da giày, chế biến thủy sản.</li>
+          <li>Trở thành cực tăng trưởng quan trọng trong tam giác kinh tế Hà Nội – Hải Phòng – Quảng Ninh.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="timeline-item right" data-period="2009-2019">
+      <div class="card">
+        <span class="close-focus-hint">Thu nhỏ ✕</span>
+        <span class="year-tag">2009 – 2019</span>
+        <h2>Đột phá hạ tầng chiến lược & Công nghệ cao</h2>
+        <p>Hàng loạt công trình giao thông trọng điểm đi vào hoạt động, tạo cú hích thu hút các tập đoàn công nghệ toàn cầu.</p>
+        <ul class="highlights">
+          <li>Khánh thành Cao tốc Hà Nội – Hải Phòng (2015) và Cầu vượt biển Tân Vũ – Lạch Huyện (2017).</li>
+          <li>Đưa vào khai thác Cảng cửa ngõ quốc tế Lạch Huyện (2018) đón tàu trọng tải lớn.</li>
+          <li>Thu hút tổ hợp sản xuất ô tô VinFast, LG Electronics chuyển dịch cơ cấu sang công nghệ cao.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="timeline-item left" data-period="2020-2026">
+      <div class="card">
+        <span class="close-focus-hint">Thu nhỏ ✕</span>
+        <span class="year-tag">2020 – 2026</span>
+        <h2>Kinh tế số, Kinh tế xanh & Tầm vóc khu vực</h2>
+        <p>Triển khai Nghị quyết 45-NQ/TW, bứt phá mạnh mẽ về tốc độ tăng trưởng GRDP và chuyển đổi mô hình tăng trưởng.</p>
+        <ul class="highlights">
+          <li>Duy trì đà tăng trưởng GRDP thuộc nhóm dẫn đầu cả nước suốt nhiều năm liền.</li>
+          <li>Phát triển Khu kinh tế ven biển phía Nam Hải Phòng theo hướng sinh thái, kinh tế xanh.</li>
+          <li>Đẩy mạnh chuyển đổi số trong cảng biển (cảng thông minh), logistics và dịch vụ đô thị hiện đại.</li>
+        </ul>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    // 1. Hiệu ứng xuất hiện khi cuộn trang
+    const items = document.querySelectorAll('.timeline-item');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('show');
+        }
+      });
+    }, { threshold: 0.15 });
+
+    items.forEach(item => observer.observe(item));
+
+    // 2. Chức năng Focus (Phóng to 1 thẻ & làm tối mờ các phần khác)
+    const backdrop = document.getElementById('focusBackdrop');
+
+    function clearFocus() {
+      document.body.classList.remove('is-focusing');
+      items.forEach(el => el.classList.remove('focused'));
+    }
+
+    items.forEach(item => {
+      const card = item.querySelector('.card');
+      card.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isAlreadyFocused = item.classList.contains('focused');
+
+        clearFocus();
+
+        if (!isAlreadyFocused) {
+          document.body.classList.add('is-focusing');
+          item.classList.add('focused');
+          // Tự động cuộn nhẹ thẻ được chọn vào giữa màn hình
+          item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      });
+    });
+
+    // Nhấn ra nền tối hoặc bấm ESC để thoát chế độ Focus
+    backdrop.addEventListener('click', clearFocus);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') clearFocus();
+    });
+
+    // 3. Chức năng lọc theo giai đoạn
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        clearFocus();
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const filterValue = btn.getAttribute('data-filter');
+        items.forEach(item => {
+          if (filterValue === 'all' || item.getAttribute('data-period') === filterValue) {
+            item.classList.remove('hidden');
+            setTimeout(() => item.classList.add('show'), 50);
+          } else {
+            item.classList.add('hidden');
+            item.classList.remove('show');
+          }
+        });
+      });
+    });
+  </script>
+
+  <!-- ========================================================= -->
+ 
+<script src="https://sf-cdn.coze.com/obj/unpkg-va/flow-platform/chat-app-sdk/1.2.0-beta.6/libs/oversea/index.js"></script>
+<script>
+  new CozeWebSDK.WebChatClient({
+    config: {
+      bot_id: '7693166210363490357',
+    },
+    componentProps: {
+      title: 'Coze',
+    },
+    auth: {
+      type: 'token',
+      token: 'pat_********',
+      onRefreshToken: function () {
+        return 'pat_********'
+      }
+    }
+  });
+</script>
+  <!-- ========================================================= -->
+
+</body>
+</html>
