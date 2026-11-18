@@ -33,8 +33,8 @@
     .focus-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(2, 6, 15, 0.82);
-      backdrop-filter: blur(4px);
+      background: rgba(2, 6, 15, 0.84);
+      backdrop-filter: blur(5px);
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.35s ease;
@@ -57,7 +57,7 @@
 
     body.is-focusing header,
     body.is-focusing .filter-bar {
-      opacity: 0.25;
+      opacity: 0.2;
       pointer-events: none;
     }
 
@@ -93,7 +93,7 @@
       margin-top: 10px;
       font-size: 0.88rem;
       color: var(--accent-blue);
-      opacity: 0.85;
+      opacity: 0.9;
     }
 
     /* Bộ lọc giai đoạn */
@@ -131,7 +131,7 @@
     /* Trục Timeline */
     .timeline-container {
       position: relative;
-      max-width: 1050px;
+      max-width: 1100px;
       margin: 0 auto 80px;
       padding: 20px;
     }
@@ -196,11 +196,11 @@
 
     /* Thẻ nội dung */
     .card {
-      padding: 24px;
       background: var(--bg-card);
       border: 1px solid var(--border-color);
-      border-radius: 14px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
       cursor: pointer;
       position: relative;
       transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
@@ -210,19 +210,70 @@
     }
 
     .card:hover {
-      transform: translateY(-4px);
+      transform: translateY(-5px);
       border-color: var(--accent-blue);
     }
 
-    /* --- HIỆU ỨNG KHI BẬT CHẾ ĐỘ FOCUS --- */
-    /* Các thẻ KHÔNG được chọn sẽ tối sẫm và mờ nhẹ đi */
-    body.is-focusing .timeline-item:not(.focused) {
-      opacity: 0.22;
-      filter: brightness(0.45) grayscale(40%);
+    /* Khung ảnh trên đầu mỗi thẻ */
+    .card-image-wrap {
+      position: relative;
+      width: 100%;
+      height: 195px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #132e52, #09182c);
+      border-bottom: 1px solid rgba(0, 180, 216, 0.2);
+    }
+
+    .card-image-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease, filter 0.4s ease;
+    }
+
+    /* Hiệu ứng màu cổ điển cho giai đoạn 1976-1985 */
+    .timeline-item[data-period="1976-1985"] .card-image-wrap img {
+      filter: sepia(35%) contrast(1.05);
+    }
+
+    .card:hover .card-image-wrap img {
+      transform: scale(1.06);
+    }
+
+    /* Lớp phủ gradient nhẹ dưới đáy ảnh để nổi chữ */
+    .card-image-wrap::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(15, 35, 60, 0.95) 0%, rgba(15, 35, 60, 0.15) 60%, transparent 100%);
       pointer-events: none;
     }
 
-    /* Thẻ ĐƯỢC CHỌN sẽ nổi lên trên lớp phủ đen và phóng to */
+    .image-caption {
+      position: absolute;
+      bottom: 10px;
+      left: 16px;
+      right: 16px;
+      z-index: 2;
+      font-size: 0.78rem;
+      color: #cbd5e1;
+      font-style: italic;
+      opacity: 0.9;
+    }
+
+    /* Phần thân chữ của thẻ */
+    .card-body {
+      padding: 20px 24px 24px;
+    }
+
+    /* --- HIỆU ỨNG KHI BẬT CHẾ ĐỘ FOCUS --- */
+    body.is-focusing .timeline-item:not(.focused) {
+      opacity: 0.2;
+      filter: brightness(0.4) grayscale(50%);
+      pointer-events: none;
+    }
+
     .timeline-item.focused {
       z-index: 100;
       opacity: 1 !important;
@@ -233,7 +284,11 @@
       transform: scale(1.08);
       background: #132c4c;
       border-color: var(--accent-blue);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 25px rgba(0, 180, 216, 0.45);
+      box-shadow: 0 22px 55px rgba(0, 0, 0, 0.9), 0 0 28px rgba(0, 180, 216, 0.45);
+    }
+
+    .timeline-item.focused .card-image-wrap {
+      height: 230px; /* Ảnh mở rộng cao hơn chút khi phóng to */
     }
 
     .timeline-item.focused::after {
@@ -243,18 +298,21 @@
       transform: scale(1.25);
     }
 
-    /* Nút đóng nhỏ ở góc thẻ khi đang phóng to */
+    /* Nút đóng nhỏ ở góc ảnh khi đang phóng to */
     .close-focus-hint {
       display: none;
       position: absolute;
-      top: 16px;
-      right: 18px;
+      top: 14px;
+      right: 14px;
+      z-index: 5;
       font-size: 0.8rem;
-      color: var(--accent-blue);
-      background: rgba(0, 180, 216, 0.12);
-      padding: 3px 10px;
-      border-radius: 6px;
-      border: 1px solid rgba(0, 180, 216, 0.3);
+      font-weight: 600;
+      color: #ffffff;
+      background: rgba(7, 19, 36, 0.8);
+      backdrop-filter: blur(4px);
+      padding: 5px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--accent-blue);
     }
 
     .timeline-item.focused .close-focus-hint {
@@ -266,7 +324,7 @@
       font-size: 0.85rem;
       font-weight: 700;
       color: var(--accent-blue);
-      background: rgba(0, 180, 216, 0.12);
+      background: rgba(0, 180, 216, 0.14);
       padding: 4px 12px;
       border-radius: 6px;
       margin-bottom: 10px;
@@ -337,7 +395,7 @@
     <div class="badge">50 Năm Phát Triển Kinh Tế</div>
     <h1>Hải Phòng: Hành Trình Vươn Ra Biển Lớn (1976 – 2026)</h1>
     <p>Dòng thời gian chuyển mình từ kinh tế bao cấp sau thống nhất đến trung tâm công nghiệp, cảng biển hiện đại hàng đầu cả nước.</p>
-    <div class="hint-text">💡 Mẹo: Nhấn vào từng giai đoạn bất kỳ để phóng to và tập trung đọc chi tiết</div>
+    <div class="hint-text">💡 Mẹo: Nhấn vào từng thẻ giai đoạn để phóng to ảnh & đọc chi tiết</div>
   </header>
 
   <!-- Thanh lọc theo thời kỳ -->
@@ -353,73 +411,108 @@
   <!-- Nội dung Timeline -->
   <main class="timeline-container" id="timeline">
 
+    <!-- Mốc 1 -->
     <div class="timeline-item left" data-period="1976-1985">
       <div class="card">
         <span class="close-focus-hint">Thu nhỏ ✕</span>
-        <span class="year-tag">1976 – 1985</span>
-        <h2>Khôi phục hạ tầng & Kinh tế bao cấp</h2>
-        <p>Giai đoạn khắc phục hậu quả chiến tranh, vận hành theo cơ chế kế hoạch hóa tập trung và tìm tòi hướng đi mới trong sản xuất.</p>
-        <ul class="highlights">
-          <li>Khôi phục hệ thống Cảng Hải Phòng và các cơ sở công nghiệp nặng (cơ khí, đóng tàu, xi măng).</li>
-          <li>Thí điểm "khoán sản phẩm" trong nông nghiệp tại Đồ Sơn (tiền đề cho Khoán 10).</li>
-          <li>Kinh tế chủ yếu dựa vào quốc doanh và hợp tác xã, tự cung tự cấp.</li>
-        </ul>
+        <div class="card-image-wrap">
+          <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80" alt="Khôi phục công nghiệp và cảng biển" onerror="this.style.display='none'">
+          <span class="image-caption">Khôi phục cơ sở công nghiệp nặng và cảng biển sau thống nhất</span>
+        </div>
+        <div class="card-body">
+          <span class="year-tag">1976 – 1985</span>
+          <h2>Khôi phục hạ tầng & Kinh tế bao cấp</h2>
+          <p>Giai đoạn khắc phục hậu quả chiến tranh, vận hành theo cơ chế kế hoạch hóa tập trung và tìm tòi hướng đi mới trong sản xuất.</p>
+          <ul class="highlights">
+            <li>Khôi phục hệ thống Cảng Hải Phòng và các cơ sở công nghiệp nặng (cơ khí, đóng tàu, xi măng).</li>
+            <li>Thí điểm "khoán sản phẩm" trong nông nghiệp tại Đồ Sơn (tiền đề cho Khoán 10).</li>
+            <li>Kinh tế chủ yếu dựa vào quốc doanh và hợp tác xã, tự cung tự cấp.</li>
+          </ul>
+        </div>
       </div>
     </div>
 
+    <!-- Mốc 2 -->
     <div class="timeline-item right" data-period="1986-1995">
       <div class="card">
         <span class="close-focus-hint">Thu nhỏ ✕</span>
-        <span class="year-tag">1986 – 1995</span>
-        <h2>Bước ngoặt Đổi Mới & Mở cửa thu hút FDI</h2>
-        <p>Chuyển dịch từ cơ chế bao cấp sang kinh tế hàng hóa nhiều thành phần, bắt đầu hội nhập quốc tế.</p>
-        <ul class="highlights">
-          <li>Xóa bỏ ngăn sông cấm chợ, khuyến khích kinh tế tư nhân và kinh tế hộ gia đình phát triển.</li>
-          <li>Thành lập Khu chế xuất Hải Phòng (1993) và KCN Nomura (1994) – đón làn sóng vốn FDI đầu tiên.</li>
-          <li>Hoạt động xuất nhập khẩu qua cảng bắt đầu tăng trưởng mạnh mẽ.</li>
-        </ul>
+        <div class="card-image-wrap">
+          <img src="https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=800&q=80" alt="Mở cửa thương mại cảng biển" onerror="this.style.display='none'">
+          <span class="image-caption">Xóa bỏ bao cấp, mở cửa giao thương và đón dòng vốn FDI đầu tiên</span>
+        </div>
+        <div class="card-body">
+          <span class="year-tag">1986 – 1995</span>
+          <h2>Bước ngoặt Đổi Mới & Mở cửa thu hút FDI</h2>
+          <p>Chuyển dịch từ cơ chế bao cấp sang kinh tế hàng hóa nhiều thành phần, bắt đầu hội nhập quốc tế.</p>
+          <ul class="highlights">
+            <li>Xóa bỏ ngăn sông cấm chợ, khuyến khích kinh tế tư nhân và kinh tế hộ gia đình phát triển.</li>
+            <li>Thành lập Khu chế xuất Hải Phòng (1993) và KCN Nomura (1994) – đón làn sóng vốn FDI đầu tiên.</li>
+            <li>Hoạt động xuất nhập khẩu qua cảng bắt đầu tăng trưởng mạnh mẽ.</li>
+          </ul>
+        </div>
       </div>
     </div>
 
+    <!-- Mốc 3 -->
     <div class="timeline-item left" data-period="1996-2008">
       <div class="card">
         <span class="close-focus-hint">Thu nhỏ ✕</span>
-        <span class="year-tag">1996 – 2008</span>
-        <h2>Công nghiệp hóa & Mở rộng Khu kinh tế</h2>
-        <p>Hình thành các khu công nghiệp quy mô lớn, nâng cao năng lực vận tải biển và sản xuất hàng xuất khẩu.</p>
-        <ul class="highlights">
-          <li>Phát triển KCN Đình Vũ, VSIP Hải Phòng; thành lập Khu kinh tế Đình Vũ – Cát Hải (2008).</li>
-          <li>Các ngành mũi nhọn: đóng tàu, sản xuất thép, dệt may, da giày, chế biến thủy sản.</li>
-          <li>Trở thành cực tăng trưởng quan trọng trong tam giác kinh tế Hà Nội – Hải Phòng – Quảng Ninh.</li>
-        </ul>
+        <div class="card-image-wrap">
+          <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80" alt="Công nghiệp hóa và khu kinh tế" onerror="this.style.display='none'">
+          <span class="image-caption">Mở rộng quy mô khu công nghiệp và năng lực bốc xếp hàng hóa</span>
+        </div>
+        <div class="card-body">
+          <span class="year-tag">1996 – 2008</span>
+          <h2>Công nghiệp hóa & Mở rộng Khu kinh tế</h2>
+          <p>Hình thành các khu công nghiệp quy mô lớn, nâng cao năng lực vận tải biển và sản xuất hàng xuất khẩu.</p>
+          <ul class="highlights">
+            <li>Phát triển KCN Đình Vũ, VSIP Hải Phòng; thành lập Khu kinh tế Đình Vũ – Cát Hải (2008).</li>
+            <li>Các ngành mũi nhọn: đóng tàu, sản xuất thép, dệt may, da giày, chế biến thủy sản.</li>
+            <li>Trở thành cực tăng trưởng quan trọng trong tam giác kinh tế Hà Nội – Hải Phòng – Quảng Ninh.</li>
+          </ul>
+        </div>
       </div>
     </div>
 
+    <!-- Mốc 4 -->
     <div class="timeline-item right" data-period="2009-2019">
       <div class="card">
         <span class="close-focus-hint">Thu nhỏ ✕</span>
-        <span class="year-tag">2009 – 2019</span>
-        <h2>Đột phá hạ tầng chiến lược & Công nghệ cao</h2>
-        <p>Hàng loạt công trình giao thông trọng điểm đi vào hoạt động, tạo cú hích thu hút các tập đoàn công nghệ toàn cầu.</p>
-        <ul class="highlights">
-          <li>Khánh thành Cao tốc Hà Nội – Hải Phòng (2015) và Cầu vượt biển Tân Vũ – Lạch Huyện (2017).</li>
-          <li>Đưa vào khai thác Cảng cửa ngõ quốc tế Lạch Huyện (2018) đón tàu trọng tải lớn.</li>
-          <li>Thu hút tổ hợp sản xuất ô tô VinFast, LG Electronics chuyển dịch cơ cấu sang công nghệ cao.</li>
-        </ul>
+        <div class="card-image-wrap">
+          <img src="https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fit=crop&w=800&q=80" alt="Cầu vượt biển và hạ tầng hiện đại" onerror="this.style.display='none'">
+          <span class="image-caption">Đột phá hạ tầng giao thông biển đảo và tổ hợp công nghệ cao</span>
+        </div>
+        <div class="card-body">
+          <span class="year-tag">2009 – 2019</span>
+          <h2>Đột phá hạ tầng chiến lược & Công nghệ cao</h2>
+          <p>Hàng loạt công trình giao thông trọng điểm đi vào hoạt động, tạo cú hích thu hút các tập đoàn công nghệ toàn cầu.</p>
+          <ul class="highlights">
+            <li>Khánh thành Cao tốc Hà Nội – Hải Phòng (2015) và Cầu vượt biển Tân Vũ – Lạch Huyện (2017).</li>
+            <li>Đưa vào khai thác Cảng cửa ngõ quốc tế Lạch Huyện (2018) đón tàu trọng tải lớn.</li>
+            <li>Thu hút tổ hợp sản xuất ô tô VinFast, LG Electronics chuyển dịch cơ cấu sang công nghệ cao.</li>
+          </ul>
+        </div>
       </div>
     </div>
 
+    <!-- Mốc 5 -->
     <div class="timeline-item left" data-period="2020-2026">
       <div class="card">
         <span class="close-focus-hint">Thu nhỏ ✕</span>
-        <span class="year-tag">2020 – 2026</span>
-        <h2>Kinh tế số, Kinh tế xanh & Tầm vóc khu vực</h2>
-        <p>Triển khai Nghị quyết 45-NQ/TW, bứt phá mạnh mẽ về tốc độ tăng trưởng GRDP và chuyển đổi mô hình tăng trưởng.</p>
-        <ul class="highlights">
-          <li>Duy trì đà tăng trưởng GRDP thuộc nhóm dẫn đầu cả nước suốt nhiều năm liền.</li>
-          <li>Phát triển Khu kinh tế ven biển phía Nam Hải Phòng theo hướng sinh thái, kinh tế xanh.</li>
-          <li>Đẩy mạnh chuyển đổi số trong cảng biển (cảng thông minh), logistics và dịch vụ đô thị hiện đại.</li>
-        </ul>
+        <div class="card-image-wrap">
+          <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80" alt="Đô thị hiện đại kinh tế số" onerror="this.style.display='none'">
+          <span class="image-caption">Hướng tới đô thị thông minh, kinh tế xanh và tầm vóc khu vực</span>
+        </div>
+        <div class="card-body">
+          <span class="year-tag">2020 – 2026</span>
+          <h2>Kinh tế số, Kinh tế xanh & Tầm vóc khu vực</h2>
+          <p>Triển khai Nghị quyết 45-NQ/TW, bứt phá mạnh mẽ về tốc độ tăng trưởng GRDP và chuyển đổi mô hình tăng trưởng.</p>
+          <ul class="highlights">
+            <li>Duy trì đà tăng trưởng GRDP thuộc nhóm dẫn đầu cả nước suốt nhiều năm liền.</li>
+            <li>Phát triển Khu kinh tế ven biển phía Nam Hải Phòng theo hướng sinh thái, kinh tế xanh.</li>
+            <li>Đẩy mạnh chuyển đổi số trong cảng biển (cảng thông minh), logistics và dịch vụ đô thị hiện đại.</li>
+          </ul>
+        </div>
       </div>
     </div>
 
@@ -457,13 +550,11 @@
         if (!isAlreadyFocused) {
           document.body.classList.add('is-focusing');
           item.classList.add('focused');
-          // Tự động cuộn nhẹ thẻ được chọn vào giữa màn hình
           item.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
       });
     });
 
-    // Nhấn ra nền tối hoặc bấm ESC để thoát chế độ Focus
     backdrop.addEventListener('click', clearFocus);
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') clearFocus();
@@ -492,25 +583,7 @@
   </script>
 
   <!-- ========================================================= -->
- 
-<script src="https://sf-cdn.coze.com/obj/unpkg-va/flow-platform/chat-app-sdk/1.2.0-beta.6/libs/oversea/index.js"></script>
-<script>
-  new CozeWebSDK.WebChatClient({
-    config: {
-      bot_id: '7693166210363490357',
-    },
-    componentProps: {
-      title: 'Coze',
-    },
-    auth: {
-      type: 'token',
-      token: 'pat_********',
-      onRefreshToken: function () {
-        return 'pat_********'
-      }
-    }
-  });
-</script>
+  <!-- DÁN MÃ NHÚNG CHATBOT AI CỦA BẠN VÀO NGAY BÊN DƯỚI ĐÂY      -->
   <!-- ========================================================= -->
 
 </body>
